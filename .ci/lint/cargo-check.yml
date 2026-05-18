@@ -1,6 +1,5 @@
 lint:cargo-check:
   image: rust:${RUST_VERSION}
-  tags: [k3s-server]
   stage: lint
   cache:
     key: { files: [src-tauri/Cargo.lock] }

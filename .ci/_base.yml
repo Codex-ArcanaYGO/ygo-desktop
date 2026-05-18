@@ -1,6 +1,5 @@
 .node-base:
   image: node:${NODE_VERSION}
-  tags: [k3s-server]
   cache:
     key: { files: [package-lock.json] }
     paths: [.npm/, node_modules/]
