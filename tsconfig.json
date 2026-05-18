@@ -14,10 +14,18 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "noEmit": true,
+    "baseUrl": ".",
     "paths": {
       "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
+      "react-dom": ["./node_modules/preact/compat/"],
+      "@shared/*": ["../ygo-shared/src/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "src/types/css-modules.d.ts"]
+  "include": [
+    "src",
+    "vite.config.ts",
+    "../ygo-shared/src",
+    "../ygo-shared/test",
+    "../ygo-shared/src/types/css-modules.d.ts"
+  ]
 }

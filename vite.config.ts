@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
+import { fileURLToPath } from 'node:url'
+
+const sharedRoot = fileURLToPath(new URL('../ygo-shared', import.meta.url))
 
 export default defineConfig({
   clearScreen: false,
@@ -9,11 +12,20 @@ export default defineConfig({
     // Without this, Vite resolves .js before .ts (default Vite order), so
     // stale tsc-compiled .js files in src/ shadow our .ts edits in dev mode.
     extensions: ['.mts', '.ts', '.tsx', '.mjs', '.js', '.jsx', '.json'],
+    alias: {
+      // The shared source lives in a sibling directory `ygo-shared/`.
+      // `@shared/<subpath>` resolves to `ygo-shared/src/<subpath>`.
+      '@shared/': `${sharedRoot}/src/`,
+    },
   },
   server: {
     port: 5173,
     strictPort: true,
     host: 'localhost',
+    fs: {
+      // Allow Vite's dev server to serve files from the sibling shared dir.
+      allow: ['..'],
+    },
     watch: {
       ignored: ['**/src-tauri/**'],
     },
@@ -42,7 +54,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./test/setup.ts'],
-    include: ['test/**/*.test.ts', 'test/**/*.test.tsx'],
+    setupFiles: [`${sharedRoot}/test/setup.ts`],
+    include: [
+      `${sharedRoot}/test/**/*.test.ts`,
+      `${sharedRoot}/test/**/*.test.tsx`,
+    ],
   },
 })
