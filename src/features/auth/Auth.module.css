@@ -185,8 +185,81 @@
   margin-top: 0.5rem;
   transition: transform 80ms ease, box-shadow 200ms ease;
 }
-.submit:hover { transform: translateY(-1px); }
-.submit:disabled { opacity: 0.6; cursor: wait; }
+.submit:hover:not(:disabled) { transform: translateY(-1px); }
+.submit:active:not(:disabled) { transform: translateY(0); }
+.submit:focus-visible {
+  outline: 2px solid #c0b6ff;
+  outline-offset: 2px;
+}
+.submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: saturate(0.7);
+}
+.submit[aria-busy="true"] { cursor: progress; }
+
+/* ─── Inline field validation ─── */
+
+.input.invalid {
+  border-color: color-mix(in srgb, #ff6b81 70%, transparent);
+}
+.input.invalid:focus {
+  box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.22);
+}
+.fieldError {
+  margin: 0.35rem 0 0;
+  color: #ff6b81;
+  font-size: 0.8rem;
+}
+
+/* ─── Spinner (submit busy state) ─── */
+
+.spinnerRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2s; }
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.85rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #9c9caa);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text, #fff);
+}
+.close:focus-visible {
+  outline: 2px solid #6d54ff;
+  outline-offset: 2px;
+}
 
 .divider {
   display: flex;
