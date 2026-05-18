@@ -12,6 +12,9 @@ export default defineConfig({
     // Without this, Vite resolves .js before .ts (default Vite order), so
     // stale tsc-compiled .js files in src/ shadow our .ts edits in dev mode.
     extensions: ['.mts', '.ts', '.tsx', '.mjs', '.js', '.jsx', '.json'],
+    // Force a single Preact instance even when @shared/* imports traverse the
+    // ygo-shared/node_modules symlink (which may point to another app's dir).
+    dedupe: ['preact', 'preact/hooks', '@preact/signals'],
     alias: {
       // The shared source lives in a sibling directory `ygo-shared/`.
       // `@shared/<subpath>` resolves to `ygo-shared/src/<subpath>`.
@@ -54,10 +57,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: [`${sharedRoot}/test/setup.ts`],
+    setupFiles: ['./test/setup.ts'],
     include: [
-      `${sharedRoot}/test/**/*.test.ts`,
-      `${sharedRoot}/test/**/*.test.tsx`,
+      './test/**/*.test.ts',
+      './test/**/*.test.tsx',
     ],
   },
 })
