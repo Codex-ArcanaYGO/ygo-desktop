@@ -1,0 +1,20 @@
+# Entry point — voir .ci/{stage}/{job}.yml. Les builds binaires Tauri (macOS/Windows)
+# se font sur GitHub Actions (matrix runners) — GitLab fait uniquement lint+test.
+stages: [lint, test]
+
+variables:
+  GIT_DEPTH: "10"
+  GIT_SUBMODULE_STRATEGY: none
+  NODE_VERSION: "22-alpine"
+  RUST_VERSION: "1.88-bookworm"
+
+include:
+  - local: .ci/lint/typecheck.yml
+  - local: .ci/lint/cargo-check.yml
+  - local: .ci/test/unit.yml
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
