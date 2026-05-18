@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+# Tauri build outputs
+src-tauri/target/
+src-tauri/gen/
+
+# TypeScript sibling .js files
+src/**/*.js

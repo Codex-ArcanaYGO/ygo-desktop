@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ma Collection Yu-Gi-Oh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <div class="brand-text">
+        <h1>Ma Collection</h1>
+        <span>Yu-Gi-Oh!</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="stats-pill" id="statsPill">
+        <i class="fa-solid fa-layer-group"></i>
+        <span id="statCount">0</span>
+        <span class="muted">cartes</span>
+        <span class="stats-sep">·</span>
+        <i class="fa-solid fa-euro-sign stats-euro"></i>
+        <span id="statValue">—</span>
+      </div>
+
+      <button id="historyBtn" class="icon-btn" title="Historique des ajouts" aria-label="Historique">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+      </button>
+
+      <button id="settingsBtn" class="icon-btn" title="Paramètres &amp; logs" aria-label="Paramètres">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+
+      <div id="langToggle" class="lang-toggle" role="group" aria-label="Langue des cartes">
+        <button data-lang="fr" title="Noms français" aria-label="Français">FR</button>
+        <button data-lang="en" title="English names" aria-label="English">EN</button>
+      </div>
+
+      <div class="theme-toggle" role="group" aria-label="Thème">
+        <button data-theme="light" title="Clair" aria-label="Clair">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+        <button data-theme="dark" title="Sombre" aria-label="Sombre">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button data-theme="system" title="Système" aria-label="Système">
+          <i class="fa-solid fa-desktop"></i>
+        </button>
+      </div>
+
+      <div id="authBarMount"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="search-card">
+        <div class="search-row">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <span id="pinPrefix" class="pin-prefix" hidden></span>
+          <input
+            id="cardInput"
+            type="text"
+            placeholder="Nom d'une carte (ex. Magicien Sombre)…"
+            autocomplete="off"
+          />
+          <button id="pinBtn" class="icon-btn pin-btn" title="Épingler un préfixe" aria-label="Épingler un préfixe">
+            <i class="fa-solid fa-thumbtack"></i>
+          </button>
+          <div class="add-qty-group">
+            <button id="addBtn" class="btn-add-qty" data-qty="1">+1</button>
+            <button class="btn-add-qty" data-qty="2">+2</button>
+            <button class="btn-add-qty" data-qty="3">+3</button>
+          </div>
+        </div>
+        <ul id="suggestions" class="suggestions" hidden></ul>
+        <div id="formError" class="form-error" hidden></div>
+      </div>
+    </section>
+
+    <nav class="view-tabs" id="viewTabs">
+      <button class="view-tab active" data-view="collection">
+        <i class="fa-solid fa-layer-group"></i> Ma collection
+        <span class="view-count" id="countCollection">0</span>
+      </button>
+      <button class="view-tab" data-view="wishlist">
+        <i class="fa-regular fa-bookmark"></i> Wishlist
+        <span class="view-count" id="countWishlist">0</span>
+        <span class="tab-export-icon" id="wishlistExportTabIcon" title="Exporter la wishlist (Cardmarket .txt)"><i class="fa-solid fa-file-export"></i></span>
+      </button>
+      <button class="view-tab" data-view="decks">
+        <i class="fa-solid fa-folder-tree"></i> Decks
+        <span class="view-count" id="countDecks">0</span>
+      </button>
+      <button class="view-tab" data-view="archetypes">
+        <i class="fa-solid fa-tags"></i> Archétypes
+      </button>
+    </nav>
+
+    <section id="toolbar" class="toolbar">
+      <div class="filter-pill">
+        <i class="fa-solid fa-filter"></i>
+        <input id="filterInput" type="text" placeholder="Filtrer ma collection…" />
+      </div>
+      <div class="toolbar-right">
+        <div class="sort-group">
+          <label for="banFilterSelect" class="muted small" title="Statut banlist TCG"><i class="fa-solid fa-ban"></i></label>
+          <select id="banFilterSelect" title="Filtrer par statut banlist">
+            <option value="">Tous statuts</option>
+            <option value="any">Restreintes (toutes)</option>
+            <option value="Banned">Bannies</option>
+            <option value="Limited">Limitées (1)</option>
+            <option value="Semi-Limited">Semi-limitées (2)</option>
+            <option value="free">Sans restriction</option>
+          </select>
+        </div>
+        <div class="sort-group">
+          <label for="deckFilter" class="muted small" title="Deck"><i class="fa-solid fa-folder"></i></label>
+          <select id="deckFilter">
+            <option value="">Tous les decks</option>
+          </select>
+        </div>
+        <div class="sort-group">
+          <label for="sortSelect" class="muted small">Trier</label>
+          <select id="sortSelect">
+            <option value="recent">Plus récentes</option>
+            <option value="name">Nom (A → Z)</option>
+            <option value="name-desc">Nom (Z → A)</option>
+            <option value="type">Type</option>
+            <option value="qty">Quantité (▼)</option>
+            <option value="qty-asc">Quantité (▲)</option>
+            <option value="price-unit">Prix unitaire (▼)</option>
+            <option value="price-total">Valeur totale (▼)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="gallery"></section>
+
+    <section id="decksPage" class="decks-page" hidden>
+      <div class="decks-page-header">
+        <h2><i class="fa-solid fa-folder-tree"></i> Mes decks</h2>
+        <div class="decks-page-actions">
+          <button id="deckImportBtn" class="btn-secondary" title="Importer un fichier .ydk">
+            <i class="fa-solid fa-file-import"></i> Importer YDK
+          </button>
+          <button id="deckCreateNewBtn" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Nouveau deck
+          </button>
+        </div>
+      </div>
+
+      <!-- Suggestions banner: meta decks the user can adopt in one click -->
+      <section class="deck-suggestions" id="deckSuggestions">
+        <header class="deck-suggestions-head">
+          <div>
+            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Suggestions de decks meta</h3>
+            <p class="muted small">Top 8 decks compétitifs — « % possédé » prend en compte les copies (3× nécessaires).</p>
+          </div>
+          <div class="deck-suggestions-actions">
+            <button id="suggestEvaluateBtn" class="btn-secondary btn-sm" title="Calculer le % de cartes possédées pour chaque suggestion">
+              <i class="fa-solid fa-calculator"></i> Évaluer
+            </button>
+            <button id="suggestRotateBtn" class="btn-secondary btn-sm" title="Afficher d'autres decks (les actuels passent à l'historique)">
+              <i class="fa-solid fa-arrows-rotate"></i> Faire tourner
+            </button>
+            <button id="suggestBuildFromColBtn" class="btn-primary btn-sm" title="Trouver le meilleur deck pour votre collection actuelle">
+              <i class="fa-solid fa-wand-sparkles"></i> Optimiser
+            </button>
+          </div>
+        </header>
+        <div class="deck-suggestions-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="suggestSearchInput" type="search" placeholder="Filtrer par nom ou archétype…" autocomplete="off" />
+          <span id="suggestSortLabel" class="muted small">Trié par taux estimé</span>
+        </div>
+        <div id="deckSuggestionsList" class="deck-suggestions-list"></div>
+        <details class="deck-suggestions-history" id="deckSuggestionsHistory" hidden>
+          <summary><i class="fa-solid fa-clock-rotate-left"></i> <span id="suggestHistoryLabel">Historique</span></summary>
+          <div id="deckSuggestionsHistoryList" class="deck-suggestions-history-list"></div>
+        </details>
+      </section>
+
+      <div id="deckBuildsList" class="deck-builds-list"></div>
+    </section>
+
+    <section id="archetypesPage" class="archetypes-page" hidden></section>
+
+    <div id="emptyState" class="empty-state" hidden>
+      <div class="empty-illu"><i class="fa-solid fa-sparkles"></i></div>
+      <h2>Votre collection est vide</h2>
+      <p>Cherchez une carte par son nom français pour commencer.</p>
+    </div>
+  </main>
+
+  <!-- Deck builder modal -->
+  <div id="deckBuilderModal" class="modal" hidden>
+    <div class="modal-backdrop" data-close-deckbuilder></div>
+    <div class="modal-content deck-builder-content" role="dialog" aria-modal="true" aria-label="Éditeur de deck">
+      <button class="modal-close" data-close-deckbuilder aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="deckBuilderBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal détail -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button class="modal-close" data-close aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Edition picker -->
+  <div id="editionPicker" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button class="modal-close" data-close aria-label="Fermer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="pickerBody"></div>
+    </div>
+  </div>
+
+  <!-- Deck popover -->
+  <div id="deckPopover" class="deck-popover" hidden>
+    <ul id="deckList" class="deck-list"></ul>
+    <div class="deck-new-row">
+      <input id="deckNameInput" type="text" placeholder="Nouveau deck…" maxlength="32" />
+      <button id="deckCreateBtn" class="btn-primary" title="Créer"><i class="fa-solid fa-plus"></i></button>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div id="settingsModal" class="modal settings-modal" hidden>
+    <div class="modal-backdrop" data-close-settings></div>
+    <div class="modal-content settings-modal-content" role="dialog" aria-modal="true" aria-label="Paramètres">
+      <div class="settings-modal-header">
+        <h2><i class="fa-solid fa-gear"></i> Paramètres</h2>
+        <button class="modal-close" data-close-settings aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="settings-body"></div>
+    </div>
+  </div>
+
+  <!-- History panel -->
+  <div id="historyPanel" class="history-panel" hidden>
+    <div class="history-backdrop" data-close-history></div>
+    <div class="history-content">
+      <div class="history-header">
+        <h2><i class="fa-solid fa-clock-rotate-left"></i> Historique</h2>
+        <button class="modal-close" data-close-history aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul id="historyList" class="history-list"></ul>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
