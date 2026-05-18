@@ -31,6 +31,9 @@
     "@preact/preset-vite": "^2.10.5",
     "@preact/signals": "^2.9.0",
     "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-updater": "^2.0.0",
+    "@tauri-apps/plugin-process": "^2.0.0",
+    "@tauri-apps/plugin-opener": "^2.0.0",
     "preact": "^10.29.1"
   }
 }

@@ -1,48 +1,98 @@
 name: desktop-release
 
+# Cross-platform Tauri release pipeline.
+#
+# Triggered by:
+#   • pushing a tag like `v0.2.1` (recommended workflow)
+#   • manually via the Actions tab (workflow_dispatch)
+#
+# Produces a GitHub Release with:
+#   • macOS .dmg + .app.tar.gz + .sig (Apple Silicon and Intel)
+#   • Windows .msi/.exe + .sig
+#   • A `latest.json` manifest signed with TAURI_SIGNING_PRIVATE_KEY,
+#     which the Tauri updater fetches via the endpoint configured in
+#     src-tauri/tauri.conf.json (-> plugins.updater.endpoints[0]).
+#
+# Required repository secrets:
+#   TAURI_SIGNING_PRIVATE_KEY           # base64 from `npx tauri signer generate`
+#   TAURI_SIGNING_PRIVATE_KEY_PASSWORD  # the passphrase you set on the key
+#
+# Optional (for macOS notarization):
+#   APPLE_CERTIFICATE                   # base64 .p12
+#   APPLE_CERTIFICATE_PASSWORD
+#   APPLE_SIGNING_IDENTITY              # "Developer ID Application: Name (TEAMID)"
+#   APPLE_ID
+#   APPLE_PASSWORD                      # app-specific password
+#   APPLE_TEAM_ID
+
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  bundle:
+  release:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            target: aarch64-apple-darwin
-          - os: macos-latest
-            target: x86_64-apple-darwin
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
+          - platform: macos-latest
+            args: '--target aarch64-apple-darwin'
+            rust-target: aarch64-apple-darwin
+          - platform: macos-latest
+            args: '--target x86_64-apple-darwin'
+            rust-target: x86_64-apple-darwin
+          - platform: windows-latest
+            args: ''
+            rust-target: x86_64-pc-windows-msvc
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.rust-target }}
+
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
 
       - run: npm ci
 
-      - name: Tauri build
-        run: npx tauri build --target ${{ matrix.target }}
-
-      - uses: actions/upload-artifact@v4
+      - name: Build and publish Tauri bundles
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
-          name: ygo-desktop-${{ matrix.target }}
-          path: |
-            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.dmg
-            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.app
-            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.msi
-            src-tauri/target/${{ matrix.target }}/release/bundle/**/*.exe
+          tagName: ${{ github.ref_name }}
+          releaseName: 'YGO Collection ${{ github.ref_name }}'
+          releaseBody: |
+            Téléchargements automatiques.
+
+            * **macOS (Apple Silicon)** — `*_aarch64.dmg`
+            * **macOS (Intel)** — `*_x64.dmg`
+            * **Windows** — `*_x64-setup.exe` ou `.msi`
+
+            Les utilisateurs déjà installés recevront cette version via le
+            bouton « Vérifier les mises à jour » (Tauri updater + `latest.json`).
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
