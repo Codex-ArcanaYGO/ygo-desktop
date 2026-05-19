@@ -5,14 +5,8 @@ stages: [lint, test]
 variables:
   GIT_DEPTH: "10"
   GIT_SUBMODULE_STRATEGY: recursive
-  GIT_SUBMODULE_FORCE_HTTPS: "true"
   NODE_VERSION: "22-alpine"
   RUST_VERSION: "1.88-bookworm"
-
-before_script:
-  - git config --global credential.helper store
-  - echo "https://gitlab+deploy-token-13654826:gldt-GG7qeFnPZqsNbvwvpsLd@gitlab.com" > ~/.git-credentials
-  - git config --global url."https://gitlab.com/".insteadOf "git://gitlab.com/"
 
 include:
   - local: .ci/lint/typecheck.yml
