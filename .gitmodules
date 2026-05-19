@@ -1,0 +1,3 @@
+[submodule "ygo-shared"]
+	path = ygo-shared
+	url = ../ygo-shared.git
