@@ -13,15 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Fetch ygo-shared submodule
+        shell: bash
         env:
           GITLAB_DEPLOY_USER: ${{ secrets.GITLAB_DEPLOY_USER }}
           GITLAB_DEPLOY_TOKEN: ${{ secrets.GITLAB_DEPLOY_TOKEN }}
         run: |
+          set -e
+          echo "Cloning ygo-shared..."
           rm -rf ygo-shared
-          git clone --depth 1 \
+          git clone --depth 1 --verbose \
             "https://${GITLAB_DEPLOY_USER}:${GITLAB_DEPLOY_TOKEN}@gitlab.com/codex-thesaurus/arcanaygo/ygo-shared.git" \
             ygo-shared
+          echo "ygo-shared cloned successfully"
+          ls -la ygo-shared/
       - uses: actions/setup-node@v4
         with:
           node-version: 22
