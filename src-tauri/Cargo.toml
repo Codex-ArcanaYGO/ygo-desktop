@@ -1,6 +1,6 @@
 [package]
 name = "ygo-desktop"
-version = "0.2.1"
+version = "0.2.2"
 description = "YGO Collection desktop (Tauri 2) — offline + CRDT sync"
 authors = ["toine"]
 edition = "2021"
