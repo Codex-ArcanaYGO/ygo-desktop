@@ -43,8 +43,6 @@ jobs:
       tag: ${{ steps.resolve.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - name: Resolve release tag
         id: resolve
@@ -79,8 +77,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+
+      - name: Fetch ygo-shared submodule
+        shell: bash
+        env:
+          GITLAB_DEPLOY_USER: ${{ secrets.GITLAB_DEPLOY_USER }}
+          GITLAB_DEPLOY_TOKEN: ${{ secrets.GITLAB_DEPLOY_TOKEN }}
+        run: |
+          rm -rf ygo-shared
+          git clone --depth 1 \
+            "https://${GITLAB_DEPLOY_USER}:${GITLAB_DEPLOY_TOKEN}@gitlab.com/codex-thesaurus/arcanaygo/ygo-shared.git" \
+            ygo-shared
 
       - uses: actions/setup-node@v4
         with:
