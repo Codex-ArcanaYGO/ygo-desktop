@@ -3,9 +3,13 @@ NPM := npm
 CARGO := cargo
 TAURI := npx tauri
 
+# Public prod URL — used by `make dev-prod` so the desktop app dev shell
+# talks to the live API instead of a local backend.
+PROD_API_URL ?= https://arcana-ygo.taild2a523.ts.net/api
+
 .DEFAULT_GOAL := help
 
-.PHONY: help setup install-cli dev build test typecheck fmt lint check clean icons
+.PHONY: help setup install-cli dev dev-prod build test typecheck fmt lint check clean icons
 
 help: ## Affiche cette aide
 	@awk 'BEGIN {FS = ":.*##"; printf "\nCibles disponibles:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -23,7 +27,11 @@ install-cli: ## (optionnel) Installe le CLI Tauri global
 	$(CARGO) install tauri-cli --version "^2.0" --locked
 
 dev: node_modules ## Lance l'app desktop en dev (Vite + Tauri, hot reload)
+	@test -f .env || cp .env.example .env
 	$(TAURI) dev
+
+dev-prod: node_modules ## Lance l'app desktop en dev, branchée sur l'API prod
+	VITE_API_BASE_URL=$(PROD_API_URL) VITE_API_PROXY_TARGET=$(patsubst %/api,%,$(PROD_API_URL)) $(TAURI) dev
 
 build: node_modules ## Build natif (.dmg/.app sur macOS, .msi sur Windows)
 	$(TAURI) build
