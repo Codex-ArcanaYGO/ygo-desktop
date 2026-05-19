@@ -43,7 +43,7 @@
   "plugins": {
     "updater": {
       "endpoints": [
-        "https://github.com/codex-thesaurus/arcanaygo/releases/latest/download/latest.json"
+        "https://github.com/Codex-ArcanaYGO/ygo-desktop/releases/latest/download/latest.json"
       ],
       "pubkey": "REPLACE_WITH_BASE64_PUBKEY_FROM_TAURI_SIGNER_GENERATE"
     }
