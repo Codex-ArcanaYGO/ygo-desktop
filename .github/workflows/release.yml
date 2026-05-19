@@ -2,9 +2,8 @@ name: desktop-release
 
 # Cross-platform Tauri release pipeline.
 #
-# Triggered by:
-#   • pushing a tag like `v0.2.1` (recommended workflow)
-#   • manually via the Actions tab (workflow_dispatch)
+# Triggered automatically on every push to main (version read from
+# src-tauri/tauri.conf.json) or on an explicit v* tag push.
 #
 # Produces a GitHub Release with:
 #   • macOS .dmg + .app.tar.gz + .sig (Apple Silicon and Intel)
@@ -27,6 +26,7 @@ name: desktop-release
 
 on:
   push:
+    branches: [main]
     tags: ['v*']
   workflow_dispatch:
 
@@ -34,7 +34,33 @@ permissions:
   contents: write
 
 jobs:
+  # ── Resolve the release tag ──────────────────────────────────────────────
+  # On a branch push the tag is derived from tauri.conf.json (e.g. v0.2.0).
+  # On a tag push the pushed tag is used as-is.
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Resolve release tag
+        id: resolve
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${{ github.ref_name }}"
+          else
+            VERSION=$(python3 -c "import json; print(json.load(open('src-tauri/tauri.conf.json'))['version'])")
+            TAG="v${VERSION}"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Building release ${TAG}"
+
+  # ── Build binaries (matrix: macOS arm64, macOS x64, Windows) ────────────
   release:
+    needs: prepare
     strategy:
       fail-fast: false
       matrix:
@@ -84,8 +110,8 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'YGO Collection ${{ github.ref_name }}'
+          tagName: ${{ needs.prepare.outputs.tag }}
+          releaseName: 'YGO Collection ${{ needs.prepare.outputs.tag }}'
           releaseBody: |
             Téléchargements automatiques.
 
