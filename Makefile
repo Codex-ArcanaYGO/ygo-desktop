@@ -44,6 +44,8 @@ fmt: ## Formate le code Rust
 lint: typecheck ## Type-check TS + clippy Rust
 	cd src-tauri && $(CARGO) clippy --all-targets -- -D warnings
 
+ci: lint test ## Exécute la CI localement (lint + test)
+
 check: ## cargo check
 	cd src-tauri && $(CARGO) check
 
