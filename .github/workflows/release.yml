@@ -113,6 +113,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Set production API URL
+        shell: bash
+        run: |
+          echo "VITE_API_BASE_URL=https://toine-server.taild2a523.ts.net/ygo/api" > .env.production
+          cat .env.production
+
       - name: Build and publish Tauri bundles
         uses: tauri-apps/tauri-action@v0
         env:
