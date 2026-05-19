@@ -45,7 +45,7 @@
       "endpoints": [
         "https://github.com/Codex-ArcanaYGO/ygo-desktop/releases/latest/download/latest.json"
       ],
-      "pubkey": "REPLACE_WITH_BASE64_PUBKEY_FROM_TAURI_SIGNER_GENERATE"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFFQkEwRDJDODY5Rjk5QzMKUldURG1aK0dMQTI2SGl5R29oNFJPRnUzbkNFRkpNUHl6cFdjN1d4cjFmWU9SNGxCTmJXQmV3TDkK"
     }
   }
 }
