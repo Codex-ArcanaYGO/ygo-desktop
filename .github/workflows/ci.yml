@@ -37,6 +37,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+          shared-key: "cargo-deps"
+          cache-on-failure: true
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
