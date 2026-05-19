@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
 import { fileURLToPath } from 'node:url'
 
-const sharedRoot = fileURLToPath(new URL('../ygo-shared', import.meta.url))
+const sharedRoot = fileURLToPath(new URL('./ygo-shared', import.meta.url))
 
 export default defineConfig({
   clearScreen: false,

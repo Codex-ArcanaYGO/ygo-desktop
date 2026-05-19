@@ -4,7 +4,7 @@ stages: [lint, test]
 
 variables:
   GIT_DEPTH: "10"
-  GIT_SUBMODULE_STRATEGY: none
+  GIT_SUBMODULE_STRATEGY: recursive
   NODE_VERSION: "22-alpine"
   RUST_VERSION: "1.88-bookworm"
 
