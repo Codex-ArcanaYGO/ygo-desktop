@@ -12,7 +12,7 @@ Application native (Tauri 2 + Preact + TypeScript) pour gérer sa collection Yu-
 | En ligne    | Synchronisation CRDT toutes les 30s avec le backend (`VITE_API_BASE`). Pas de conflit possible. |
 | Premier login d'un nouvel appareil | Snapshot complet (`GET /api/sync/:store/state`) pour amorçage, puis pulls deltas. |
 
-La couche de synchronisation est un **LWW-Element-Set** ([détails](../ygo-web-backend/docs/SYNC.md)).
+La couche de synchronisation est un **LWW-Element-Set** ([détails](https://github.com/Codex-ArcanaYGO/ygo-web-backend/blob/main/docs/SYNC.md)).
 
 ## Pré-requis
 
@@ -54,7 +54,7 @@ make build
 ```
 
 Artefacts (macOS) :
-- `src-tauri/target/release/bundle/dmg/YGO Collection_0.2.0_aarch64.dmg`
+- `src-tauri/target/release/bundle/dmg/YGO Collection_0.2.1_aarch64.dmg`
 - `src-tauri/target/release/bundle/macos/YGO Collection.app`
 
 Pour produire un build Windows depuis macOS : utilisez la pipeline GitHub Actions (`.github/workflows/release.yml`).
