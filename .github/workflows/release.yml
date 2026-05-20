@@ -64,6 +64,12 @@ jobs:
     needs: prepare
     strategy:
       fail-fast: false
+      # Sérialise les jobs pour éviter la race sur `latest.json` :
+      # tauri-action fait GET → DELETE → UPLOAD sur le même asset depuis
+      # plusieurs runners en parallèle, ce qui finit en 404 « Not Found »
+      # quand un job tente de mettre à jour un asset qu'un autre vient
+      # de supprimer.
+      max-parallel: 1
       matrix:
         include:
           - platform: macos-latest
