@@ -103,6 +103,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: stable
           targets: ${{ matrix.rust-target }}
 
       - uses: Swatinem/rust-cache@v2
@@ -140,3 +141,4 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+          toolchain: stable
